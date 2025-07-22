@@ -1,0 +1,69 @@
+let shapes = [];
+let shapeId = 1;
+
+function getSelectedShapeType() {
+  if (document.getElementById("circle").checked) return "circle";
+  if (document.getElementById("square").checked) return "square";
+  if (document.getElementById("rectangle").checked) return "rectangle";
+  if (document.getElementById("triangle").checked) return "triangle";
+  if (document.getElementById("oval").checked) return "oval";
+  return null;
+}
+
+function addShape() {
+  const number = document.getElementById("number").value;
+  const shapeType = getSelectedShapeType();
+
+  if (!number || !shapeType) {
+    alert("Please select a shape and enter a number.");
+    return;
+  }
+
+  const shape = {
+    id: shapeId++,
+    number: number,
+    type: shapeType
+  };
+
+  shapes.push(shape);
+  renderShapes();
+}
+
+function renderShapes() {
+  const box = document.getElementById("box");
+  box.innerHTML = "";
+
+  shapes.forEach((shape) => {
+    const shapeDiv = document.createElement("div");
+    shapeDiv.classList.add("shape", shape.type);
+
+    shapeDiv.innerHTML = `
+      ${shape.number}
+      <div class="shape-controls">
+        <button class="btn btn-sm btn-warning" onclick="editShape(${shape.id})">✏</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteShape(${shape.id})">❌</button>
+      </div>
+    `;
+
+    box.appendChild(shapeDiv);
+  });
+}
+
+function deleteShape(id) {
+  shapes = shapes.filter(shape => shape.id !== id);
+  renderShapes();
+}
+
+function editShape(id) {
+  const shape = shapes.find(s => s.id === id);
+  const newNumber = prompt("Enter new number:", shape.number);
+  const newType = prompt("Enter new shape (circle, square, rectangle,triangle,oval):", shape.type);
+
+  if (newNumber && ["circle", "square", "rectangle","triangle","oval"].includes(newType)) {
+    shape.number = newNumber;
+    shape.type = newType;
+    renderShapes();
+  } else {
+    alert("Invalid input. Edit cancelled.");
+  }
+}
